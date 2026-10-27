@@ -1,0 +1,6 @@
+__pycache__
+*.db
+tests
+docs
+k8s
+.git

@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block content %}
+<h1>Patients</h1>
+<form method="post" class="grid">
+  <input name="name" placeholder="Full name *" required>
+  <input name="age" type="number" min="0" max="130" placeholder="Age">
+  <select name="gender"><option>Male</option><option>Female</option><option>Other</option></select>
+  <input name="phone" placeholder="Phone">
+  <input name="address" placeholder="Address">
+  <button>Add patient</button>
+</form>
+<form method="get" class="search"><input name="q" value="{{ search }}" placeholder="Search by name"><button>Search</button></form>
+<table><tr><th>ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Address</th><th></th></tr>
+{% for r in rows %}<tr><td>{{r.id}}</td><td>{{r.name}}</td><td>{{r.age}}</td><td>{{r.gender}}</td><td>{{r.phone}}</td><td>{{r.address}}</td>
+<td><form method="post" action="{{ url_for('delete_patient', pid=r.id) }}" onsubmit="return confirm('Delete patient and related records?')"><button class="danger">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="7">No patients yet.</td></tr>{% endfor %}</table>
+{% endblock %}

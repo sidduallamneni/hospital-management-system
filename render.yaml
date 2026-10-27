@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: hospital-management-system
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    disk:
+      name: hms-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: DB_PATH
+        value: /data/hms.db
+      - key: SECRET_KEY
+        generateValue: true

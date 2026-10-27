@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block content %}
+<h1>Dashboard</h1>
+<div class="cards">
+  <div class="card"><h2>{{ s.patients }}</h2><p>Patients</p></div>
+  <div class="card"><h2>{{ s.doctors }}</h2><p>Doctors</p></div>
+  <div class="card"><h2>{{ s.appointments }}</h2><p>Appointments</p></div>
+  <div class="card"><h2>₹{{ '%.0f'|format(s.revenue) }}</h2><p>Revenue (paid)</p></div>
+  <div class="card warn"><h2>₹{{ '%.0f'|format(s.unpaid) }}</h2><p>Unpaid bills</p></div>
+</div>
+<h2>Upcoming appointments</h2>
+<table><tr><th>Date</th><th>Time</th><th>Patient</th><th>Doctor</th><th>Reason</th></tr>
+{% for a in upcoming %}<tr><td>{{a.date}}</td><td>{{a.time}}</td><td>{{a.patient}}</td><td>{{a.doctor}}</td><td>{{a.reason}}</td></tr>
+{% else %}<tr><td colspan="5">No upcoming appointments.</td></tr>{% endfor %}</table>
+{% endblock %}

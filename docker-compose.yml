@@ -1,0 +1,11 @@
+services:
+  hms:
+    build: .
+    ports: ["8080:8080"]
+    environment:
+      SECRET_KEY: change-me-in-production
+    volumes:
+      - hms-data:/data
+    restart: unless-stopped
+volumes:
+  hms-data:

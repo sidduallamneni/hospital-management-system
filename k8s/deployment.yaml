@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hms
+  labels: {app: hms}
+spec:
+  replicas: 1          # SQLite = single replica. Move to a managed DB to scale out.
+  selector:
+    matchLabels: {app: hms}
+  template:
+    metadata:
+      labels: {app: hms}
+    spec:
+      containers:
+        - name: hms
+          image: YOUR_REGISTRY/hms:1.0     # replace with your pushed image
+          imagePullPolicy: IfNotPresent
+          ports: [{containerPort: 8080}]
+          env:
+            - name: PORT
+              value: "8080"
+            - name: DB_PATH
+              value: /data/hms.db
+            - name: SECRET_KEY
+              valueFrom: {secretKeyRef: {name: hms-secret, key: SECRET_KEY}}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits:   {cpu: 500m, memory: 256Mi}
+          readinessProbe: {httpGet: {path: /health, port: 8080}, initialDelaySeconds: 3}
+          livenessProbe:  {httpGet: {path: /health, port: 8080}, initialDelaySeconds: 10}
+          volumeMounts: [{name: data, mountPath: /data}]
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: hms-pvc}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: hms-pvc}
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 1Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: hms}
+spec:
+  type: LoadBalancer
+  selector: {app: hms}
+  ports: [{port: 80, targetPort: 8080}]

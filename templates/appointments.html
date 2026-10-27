@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block content %}
+<h1>Appointments</h1>
+<form method="post" class="grid">
+  <select name="patient_id" required><option value="">Select patient</option>{% for p in patients %}<option value="{{p.id}}">{{p.name}}</option>{% endfor %}</select>
+  <select name="doctor_id" required><option value="">Select doctor</option>{% for d in doctors %}<option value="{{d.id}}">{{d.name}} ({{d.specialization}})</option>{% endfor %}</select>
+  <input name="date" type="date" required><input name="time" type="time" required>
+  <input name="reason" placeholder="Reason">
+  <button>Book</button>
+</form>
+<table><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th><th>Actions</th></tr>
+{% for r in rows %}<tr><td>{{r.id}}</td><td>{{r.patient}}</td><td>{{r.doctor}}</td><td>{{r.date}}</td><td>{{r.time}}</td><td>{{r.reason}}</td>
+<td><span class="badge {{ r.status|lower }}">{{r.status}}</span></td>
+<td class="actions">
+ <form method="post" action="{{ url_for('appointment_status', aid=r.id) }}"><select name="status" onchange="this.form.submit()">
+   {% for s in ['Scheduled','Completed','Cancelled'] %}<option {% if s==r.status %}selected{% endif %}>{{s}}</option>{% endfor %}</select></form>
+ <form method="post" action="{{ url_for('delete_appointment', aid=r.id) }}"><button class="danger">✕</button></form></td></tr>
+{% else %}<tr><td colspan="8">No appointments yet.</td></tr>{% endfor %}</table>
+{% endblock %}
